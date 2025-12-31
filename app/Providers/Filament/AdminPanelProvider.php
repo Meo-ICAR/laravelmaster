@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\User;
 use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
 use DutchCodingCompany\FilamentSocialite\Provider;
 use Filament\Http\Middleware\Authenticate;
@@ -22,6 +23,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;  // Già che ci sei, servirà anche questo per Str::random
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -35,6 +38,9 @@ class AdminPanelProvider extends PanelProvider
             MicrosoftExtendSocialite::class,
             'handle',
         ]);
+        Event::listen(function (SocialiteWasCalled $event) {
+            $event->extendSocialite('google', \SocialiteProviders\Google\Provider::class);
+        });
     }
 
     public function panel(Panel $panel): Panel
@@ -43,6 +49,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandLogo(asset('images/castingpro.png'))  // Percorso del tuo logo
+            //    ->brandLogoHeight('3rem')  // Altezza del logo
+            ->favicon(asset('images/favicon.ico'))  // Opzionale: favicon personalizzata
             ->registration()
             ->passwordReset()
             ->emailVerification()
@@ -80,14 +89,23 @@ class AdminPanelProvider extends PanelProvider
                             ->label('Microsoft')
                             ->icon('fab-microsoft')
                             ->color('info'),
+                        Provider::make('google')
+                            ->label('Google')
+                            ->icon('fab-google')
+                            ->color('success'),
                     ])
                     ->registration(true)  // Abilita la registrazione automatica per nuovi utenti
+                    // Questo forza il plugin a mostrare i bottoni in entrambe le pagine
+                    //  ->showNotAssociatedMessage(true)
                     ->createUserUsing(function (string $provider, $oauthUser, $plugin) {
                         // Logica personalizzata per creare l'utente
-                        return \App\Models\User::create([
+                        return User::create([
                             'name' => $oauthUser->getName(),
                             'email' => $oauthUser->getEmail(),
                             'password' => null,  // Password nullable obbligatoria per Socialite
+                            'avatar_url' => $oauthUser->getAvatar(),  // Salva l'URL di Google
+                            'email_verified_at' => now(),  // Google certifica l'email, quindi la segniamo come verificata
+                            'password' => Hash::make(Str::random(32)),  // Password casuale sicura
                         ]);
                     }),
             ])

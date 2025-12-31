@@ -13,6 +13,7 @@
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
         "owenvoke/blade-fontawesome": "^3.0",
+        "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft": "^4.7"
     },
     "require-dev": {

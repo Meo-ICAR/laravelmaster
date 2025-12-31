@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements FilamentUser  // , HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -20,6 +20,12 @@ class User extends Authenticatable implements FilamentUser  // , HasAvatar
     /**
      * Determine if the user can access the Filament panel.
      */
+    public function getFilamentAvatarUrl(): ?string
+    {
+        // Se l'utente ha un avatar_url (da Google), usa quello, altrimenti null
+        return $this->avatar_url;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // For local development, you might allow everyone.
@@ -36,6 +42,8 @@ class User extends Authenticatable implements FilamentUser  // , HasAvatar
         'name',
         'email',
         'password',
+        'avatar_url',  // Non dimenticare questo se vuoi l'avatar!
+        'email_verified_at',
     ];
 
     /**
