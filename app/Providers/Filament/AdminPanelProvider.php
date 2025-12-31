@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;  // Già che ci sei, servirà anche questo per Str::random
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
+// use SocialiteProviders\LinkedIn\LinkedInExtendSocialite;  // Fai attenzione alle maiuscole: LinkedIn
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use SocialiteProviders\Microsoft\MicrosoftExtendSocialite;
 
@@ -40,7 +41,14 @@ class AdminPanelProvider extends PanelProvider
             'handle',
         ]);
         Event::listen(function (SocialiteWasCalled $event) {
+            // Google
             $event->extendSocialite('google', \SocialiteProviders\Google\Provider::class);
+
+            // LinkedIn
+            $event->extendSocialite('linkedin', \SocialiteProviders\LinkedIn\Provider::class);
+
+            // Instagram
+            $event->extendSocialite('instagram_basic', \SocialiteProviders\InstagramBasic\Provider::class);
         });
     }
 
@@ -91,14 +99,22 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSocialitePlugin::make()
                     ->providers([
-                        Provider::make('microsoft')
-                            ->label('Microsoft')
-                            ->icon('fab-microsoft')
-                            ->color('info'),
+                        Provider::make('instagram_basic')
+                            ->label('Instagram')
+                            ->icon('fab-instagram')
+                            ->color('success'),
                         Provider::make('google')
                             ->label('Google')
                             ->icon('fab-google')
                             ->color('success'),
+                        Provider::make('linkedin')
+                            ->label('LinkedIn')
+                            ->icon('fab-linkedin')
+                            ->color('primary'),
+                        Provider::make('microsoft')
+                            ->label('Microsoft')
+                            ->icon('fab-microsoft')
+                            ->color('info'),
                     ])
                     ->registration(true)  // Abilita la registrazione automatica per nuovi utenti
                     // Questo forza il plugin a mostrare i bottoni in entrambe le pagine
