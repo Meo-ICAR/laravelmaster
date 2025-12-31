@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
-// use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
