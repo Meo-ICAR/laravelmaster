@@ -22,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;  // Importante per usare Blade::render
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;  // Già che ci sei, servirà anche questo per Str::random
@@ -58,6 +59,11 @@ class AdminPanelProvider extends PanelProvider
             //   ->emailChangeVerification()
             ->profile()
             ->login()
+            // --- INIZIO CONFIGURAZIONE RENDER HOOK ---
+            ->renderHook(
+                'panels::auth.register.form.after',  // Specifica il "punto" dove apparirà
+                fn(): string => Blade::render('<div class="mt-4"><x-filament-socialite::buttons /></div>'),
+            )
             ->colors([
                 'primary' => Color::Amber,
             ])
