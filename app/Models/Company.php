@@ -70,4 +70,14 @@ class Company extends Model
     {
         return $this->hasMany(Service::class);
     }
+
+    public function actors(): HasMany
+    {
+        return $this->hasMany(Actor::class);
+    }
+
+    public function animals(): HasMany
+    {
+        return $this->hasMany(Animal::class);
+    }
 }
