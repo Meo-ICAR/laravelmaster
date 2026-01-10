@@ -68,4 +68,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'password' => 'hashed',
         ];
     }
+
+    public function animals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Animal::class);
+    }
+
+    public function shortlists(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Shortlist::class);
+    }
 }
