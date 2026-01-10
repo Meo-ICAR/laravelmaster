@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Application extends Model implements HasMedia
+class project_role_actor extends Model implements HasMedia
 {
     use InteractsWithMedia;
     protected $guarded = [];
@@ -19,11 +19,11 @@ class Application extends Model implements HasMedia
         'status' => ApplicationStatus::class,
     ];
 
-     public function registerMediaCollections(): void
+    public function registerMediaCollections(): void
     {
         $this->addMediaCollection('videos')
-             ->singleFile(); // Use this if you want to allow only one video per application
-             // Remove singleFile() if you want to allow multiple videos
+            ->singleFile(); // Use this if you want to allow only one video per application
+        // Remove singleFile() if you want to allow multiple videos
     }
 
     public function role(): BelongsTo
@@ -47,7 +47,7 @@ class Application extends Model implements HasMedia
      */
     public function getStatusColor(): string
     {
-        return match($this->status->value) {
+        return match ($this->status->value) {
             'pending' => 'warning',
             'accepted' => 'success',
             'rejected' => 'danger',

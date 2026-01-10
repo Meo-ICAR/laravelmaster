@@ -44,6 +44,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'password',
         'avatar_url',  // Non dimenticare questo se vuoi l'avatar!
         'email_verified_at',
+        'company_id',
     ];
 
     /**
@@ -77,5 +78,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function shortlists(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Shortlist::class);
+    }
+
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('slug', $role)->exists();
+    }
+
+    public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }

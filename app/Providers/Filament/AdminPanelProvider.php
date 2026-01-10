@@ -62,7 +62,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/castingpro.png'))  // Percorso del tuo logo
             //    ->brandLogoHeight('3rem')  // Altezza del logo
             ->favicon(asset('images/favicon.ico'))  // Opzionale: favicon personalizzata
-            ->registration()
+            ->registration(\App\Filament\Pages\Auth\CustomRegister::class)
             ->passwordReset()
             ->emailVerification()
             //   ->emailChangeVerification()

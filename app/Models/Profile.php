@@ -17,6 +17,8 @@ class Profile extends Model implements HasMedia // <--- 1. Implementa l'interfac
     use InteractsWithMedia; // <--- 2. Usa il Trait
     use HasWhatsapp; // <--- Attivalo qui
 
+    protected $table = 'actors';
+
     // Cast automatico da JSON MariaDB ad Array PHP
     protected $casts = [
         'birth_date' => 'date',

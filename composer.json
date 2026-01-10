@@ -9,6 +9,7 @@
         "php": "^8.2",
         "dutchcodingcompany/filament-socialite": "^3.0",
         "filament/filament": "^4.4",
+        "laravel/cashier": "^16.2",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
@@ -17,7 +18,8 @@
         "socialiteproviders/instagram": "^5.1",
         "socialiteproviders/instagram-basic": "*",
         "socialiteproviders/linkedin": "*",
-        "socialiteproviders/microsoft": "^4.7"
+        "socialiteproviders/microsoft": "^4.7",
+        "spatie/laravel-medialibrary": "^11.17"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
