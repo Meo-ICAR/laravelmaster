@@ -2,7 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/admin');
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// Pagina Privacy Policy
+Route::view('/privacy', 'privacy')->name('privacy');
+
+// Pagina Termini e Condizioni
+Route::view('/terms', 'terms')->name('terms');
+
+// Pagina Termini e Condizioni
+Route::view('/cookie', 'cookie')->name('cookie');
+
+// Pagina More Info
+Route::view('/more-info', 'more-info')->name('more-info');
+
 
 /*
  * // Pagina di benvenuto (puoi personalizzarla in futuro)
