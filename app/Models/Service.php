@@ -43,6 +43,11 @@ class Service extends Model
         return $this->hasMany(Quotation::class);
     }
 
+    public function serviceCodes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(ServiceCode::class);
+    }
+
     public function getServiceTypeLabelAttribute(): string
     {
         if ($this->relationLoaded('serviceType') && $this->serviceType) {

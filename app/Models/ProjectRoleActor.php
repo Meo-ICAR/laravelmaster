@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class project_role_actor extends Model implements HasMedia
+class ProjectRoleActor extends Model implements HasMedia
 {
     use InteractsWithMedia;
     protected $guarded = [];
@@ -33,7 +33,7 @@ class project_role_actor extends Model implements HasMedia
 
     public function profile(): BelongsTo
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(Actor::class);
     }
     /**
      * Get the human-readable status label

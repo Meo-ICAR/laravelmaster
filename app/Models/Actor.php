@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasWhatsapp; // <--- Importa il Trait
 
 
-class Profile extends Model implements HasMedia // <--- 1. Implementa l'interfaccia
+class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfaccia
 {
     use InteractsWithMedia; // <--- 2. Usa il Trait
     use HasWhatsapp; // <--- Attivalo qui
@@ -159,7 +159,7 @@ class Profile extends Model implements HasMedia // <--- 1. Implementa l'interfac
 
     public function applications()
     {
-        return $this->hasMany(Application::class);
+        return $this->hasMany(ProjectRoleActor::class);
     }
 
     public function shortlists(): \Illuminate\Database\Eloquent\Relations\HasMany
