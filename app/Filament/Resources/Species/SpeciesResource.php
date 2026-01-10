@@ -8,17 +8,20 @@ use App\Filament\Resources\Species\Pages\ListSpecies;
 use App\Filament\Resources\Species\Schemas\SpeciesForm;
 use App\Filament\Resources\Species\Tables\SpeciesTable;
 use App\Models\Species;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class SpeciesResource extends Resource
 {
     protected static ?string $model = Species::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
 
     public static function form(Schema $schema): Schema
     {

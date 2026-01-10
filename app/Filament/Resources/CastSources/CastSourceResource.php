@@ -8,17 +8,20 @@ use App\Filament\Resources\CastSources\Pages\ListCastSources;
 use App\Filament\Resources\CastSources\Schemas\CastSourceForm;
 use App\Filament\Resources\CastSources\Tables\CastSourcesTable;
 use App\Models\CastSource;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class CastSourceResource extends Resource
 {
     protected static ?string $model = CastSource::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
 
     public static function form(Schema $schema): Schema
     {

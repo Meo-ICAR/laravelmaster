@@ -45,6 +45,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'avatar_url',  // Non dimenticare questo se vuoi l'avatar!
         'email_verified_at',
         'company_id',
+        'privacy_policy_accepted_at',
+        'terms_accepted_at',
+        'marketing_consent',
+        'newsletter_subscription',
+        'data_processing_consent',
+        'data_processing_consent_at',
+        'data_erasure_requested_at',
+        'data_anonymized_at',
+        'ip_address',
+        'user_agent',
+        'deleted_at',
     ];
 
     /**

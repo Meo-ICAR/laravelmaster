@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
-class Offer extends Model
+class ProjectLocationOffer extends Model
 {
     protected $fillable = [
         'project_location_id',
@@ -37,5 +37,4 @@ class Offer extends Model
     {
         return $this->belongsTo(Company::class);
     }
-
 }

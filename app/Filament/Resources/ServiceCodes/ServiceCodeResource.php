@@ -8,17 +8,20 @@ use App\Filament\Resources\ServiceCodes\Pages\ListServiceCodes;
 use App\Filament\Resources\ServiceCodes\Schemas\ServiceCodeForm;
 use App\Filament\Resources\ServiceCodes\Tables\ServiceCodesTable;
 use App\Models\ServiceCode;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class ServiceCodeResource extends Resource
 {
     protected static ?string $model = ServiceCode::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
 
     public static function form(Schema $schema): Schema
     {

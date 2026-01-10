@@ -100,22 +100,22 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSocialitePlugin::make()
                     ->providers([
-                        Provider::make('instagram_basic')
-                            ->label('Instagram')
-                            ->icon('fab-instagram')
-                            ->color('success'),
+                        Provider::make('facebook')
+                            ->color('primary')  // or 'primary' for a more vibrant blue
+                            ->label('Facebook')
+                            ->icon('fab-facebook'),
                         Provider::make('google')
+                            ->color('red')  // or 'danger' for a more vibrant red
                             ->label('Google')
-                            ->icon('fab-google')
-                            ->color('success'),
+                            ->icon('fab-google'),
                         Provider::make('linkedin')
+                            ->color('info')  // or 'info' for a different blue
                             ->label('LinkedIn')
-                            ->icon('fab-linkedin')
-                            ->color('primary'),
+                            ->icon('fab-linkedin'),
                         Provider::make('microsoft')
+                            ->color('gray')  // or 'gray' for a lighter gray
                             ->label('Microsoft')
                             ->icon('fab-microsoft')
-                            ->color('info'),
                     ])
                     ->registration(true)  // Abilita la registrazione automatica per nuovi utenti
                     // Questo forza il plugin a mostrare i bottoni in entrambe le pagine

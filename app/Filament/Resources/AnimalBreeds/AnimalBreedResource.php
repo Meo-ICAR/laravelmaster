@@ -8,17 +8,20 @@ use App\Filament\Resources\AnimalBreeds\Pages\ListAnimalBreeds;
 use App\Filament\Resources\AnimalBreeds\Schemas\AnimalBreedForm;
 use App\Filament\Resources\AnimalBreeds\Tables\AnimalBreedsTable;
 use App\Models\AnimalBreed;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class AnimalBreedResource extends Resource
 {
     protected static ?string $model = AnimalBreed::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
 
     public static function form(Schema $schema): Schema
     {

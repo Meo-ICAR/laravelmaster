@@ -8,19 +8,22 @@ use App\Filament\Resources\Locations\Pages\ListLocations;
 use App\Filament\Resources\Locations\Schemas\LocationForm;
 use App\Filament\Resources\Locations\Tables\LocationsTable;
 use App\Models\Location;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BackedEnum;
+use UnitEnum;
 
 class LocationResource extends Resource
 {
     protected static ?string $model = Location::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Database';
 
     public static function form(Schema $schema): Schema
     {

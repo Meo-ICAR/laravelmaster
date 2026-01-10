@@ -8,17 +8,20 @@ use App\Filament\Resources\Actors\Pages\ListActors;
 use App\Filament\Resources\Actors\Schemas\ActorForm;
 use App\Filament\Resources\Actors\Tables\ActorsTable;
 use App\Models\Actor;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class ActorResource extends Resource
 {
     protected static ?string $model = Actor::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Database';
 
     public static function form(Schema $schema): Schema
     {

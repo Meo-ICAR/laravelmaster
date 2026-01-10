@@ -8,17 +8,20 @@ use App\Filament\Resources\Animals\Pages\ListAnimals;
 use App\Filament\Resources\Animals\Schemas\AnimalForm;
 use App\Filament\Resources\Animals\Tables\AnimalsTable;
 use App\Models\Animal;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class AnimalResource extends Resource
 {
     protected static ?string $model = Animal::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Database';
 
     public static function form(Schema $schema): Schema
     {
