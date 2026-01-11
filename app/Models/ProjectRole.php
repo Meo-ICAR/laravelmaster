@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
 class ProjectRole extends Model
 {
@@ -37,14 +38,16 @@ class ProjectRole extends Model
 
     public function actors(): BelongsToMany
     {
-        return $this->belongsToMany(Actor::class, 'project_role_actors')
+        return $this
+            ->belongsToMany(Actor::class, 'project_role_actors')
             ->withPivot(['status', 'director_notes'])
             ->withTimestamps();
     }
 
     public function animals(): BelongsToMany
     {
-        return $this->belongsToMany(Animal::class, 'project_role_animals')
+        return $this
+            ->belongsToMany(Animal::class, 'project_role_animals')
             ->withPivot(['status', 'director_notes'])
             ->withTimestamps();
     }

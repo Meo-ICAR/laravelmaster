@@ -47,10 +47,13 @@ return [
         'redirect' => env('LINKEDIN_REDIRECT_URI'),
         //  'proxy' => env('PROXY')  // Optional, will be used for all requests
     ],
-    'instagram_basic' => [
-        'client_id' => env('INSTAGRAM_CLIENT_ID'),
-        'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),
-        'redirect' => env('INSTAGRAM_REDIRECT_URI'),
+    'facebook' => [
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env('FACEBOOK_REDIRECT_URI'),
         //  'proxy' => env('PROXY')  // Optional, will be used for all requests
+    ],
+    'google_map' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
     ],
 ];

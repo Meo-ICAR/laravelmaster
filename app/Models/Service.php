@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasWhatsapp;
+use Cheesegrits\FilamentGoogleMaps\Fields\Map;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HasWhatsapp;
 
 class Service extends Model
 {
@@ -37,7 +38,6 @@ class Service extends Model
         return $this->belongsTo(Company::class);
     }
 
-
     public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
@@ -63,6 +63,7 @@ class Service extends Model
     {
         return $query->where('is_active', true);
     }
+
     public function scopeOfType($query, string $type)
     {
         return $query->where('service_type', $type);

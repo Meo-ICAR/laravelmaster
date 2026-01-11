@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Species;
 use App\Filament\Resources\Species\Pages\CreateSpecies;
 use App\Filament\Resources\Species\Pages\EditSpecies;
 use App\Filament\Resources\Species\Pages\ListSpecies;
+use App\Filament\Resources\Species\RelationManagers\AnimalBreedsRelationManager;
 use App\Filament\Resources\Species\Schemas\SpeciesForm;
 use App\Filament\Resources\Species\Tables\SpeciesTable;
 use App\Models\Species;
@@ -36,7 +37,8 @@ class SpeciesResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // Aggiungi questa riga:
+            AnimalBreedsRelationManager::class,
         ];
     }
 

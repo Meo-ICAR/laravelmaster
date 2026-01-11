@@ -48,4 +48,9 @@ class AnimalBreedResource extends Resource
             'edit' => EditAnimalBreed::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

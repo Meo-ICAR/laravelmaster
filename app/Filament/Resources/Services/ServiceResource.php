@@ -21,7 +21,13 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationLabel = 'Maestranza';
+
+    protected static ?string $modelLabel = 'Maestranza';
+
+    protected static ?string $pluralModelLabel = 'Maestranze';
 
     protected static UnitEnum|string|null $navigationGroup = 'Database';
 

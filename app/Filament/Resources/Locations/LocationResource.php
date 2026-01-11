@@ -21,7 +21,13 @@ class LocationResource extends Resource
 {
     protected static ?string $model = Location::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-s-video-camera';
+
+    protected static ?string $navigationLabel = 'Set';
+
+    protected static ?string $modelLabel = 'Location';
+
+    protected static ?string $pluralModelLabel = 'Locations';
 
     protected static UnitEnum|string|null $navigationGroup = 'Database';
 

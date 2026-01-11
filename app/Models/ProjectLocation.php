@@ -4,9 +4,10 @@ namespace App\Models;
 
 use App\Enums\ProjectLocationStatus;
 use App\Enums\ProjectLocationType;
+use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
 class ProjectLocation extends Model
 {
@@ -40,7 +41,7 @@ class ProjectLocation extends Model
         'permission_details',
         'notes',
         'specifications',
-         'is_open',
+        'is_open',
     ];
 
     protected $casts = [
@@ -57,7 +58,6 @@ class ProjectLocation extends Model
     public const STATUS_CONFIRMED = ProjectLocationStatus::CONFIRMED->value;
     public const STATUS_COMPLETED = ProjectLocationStatus::COMPLETED->value;
     public const STATUS_CANCELLED = ProjectLocationStatus::CANCELLED->value;
-
     // Location type constants (kept for backward compatibility)
     public const TYPE_INTERNAL = ProjectLocationType::INTERNAL->value;
     public const TYPE_EXTERNAL = ProjectLocationType::EXTERNAL->value;

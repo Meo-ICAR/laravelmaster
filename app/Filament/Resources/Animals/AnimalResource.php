@@ -19,7 +19,13 @@ class AnimalResource extends Resource
 {
     protected static ?string $model = Animal::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationLabel = 'Attori';
+
+    protected static ?string $modelLabel = 'Attore';
+
+    protected static ?string $pluralModelLabel = 'Attori';
 
     protected static UnitEnum|string|null $navigationGroup = 'Database';
 

@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasWhatsapp;  // <--- Importa il Trait
 use Carbon\Carbon;
+// use Cheesegrits\FilamentGoogleMaps\Fields\Map;
+use Cheesegrits\FilamentGoogleMaps\Helpers\Geocoder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Traits\HasWhatsapp; // <--- Importa il Trait
 
-
-class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfaccia
+class Actor extends Model implements HasMedia  // <--- 1. Implementa l'interfaccia
 {
-    use InteractsWithMedia; // <--- 2. Usa il Trait
-    use HasWhatsapp; // <--- Attivalo qui
+    use InteractsWithMedia;  // <--- 2. Usa il Trait
+    use HasWhatsapp;  // <--- Attivalo qui
 
     protected $table = 'actors';
 
@@ -39,7 +40,6 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
         'city',
         'country',
         'province',
-
         'height_cm',
         'weight_kg',
         'appearance',
@@ -48,13 +48,14 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
         'socials',
         'is_visible',
         'is_represented',
-
         'scene_nudo',
         'consenso_privacy',
         'tutor_name',
         'phone',
         'company_id',
-        'customer_id'
+        'customer_id',
+        'latitude',
+        'longitude'
     ];
 
     protected $guarded = [];
@@ -62,6 +63,112 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
     protected $attributes = [
         'capabilities' => '{"skills": []}',
     ];
+
+    /*
+     * Boot del model per gestire la geocodifica automatica al salvataggio
+     */
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            if ($model->isDirty(['city', 'province', 'country'])) {
+                $model->geocodeViaPlugin();
+            }
+        });
+    }
+
+    /**
+     * Utilizza la logica del plugin per ottenere le coordinate
+     */
+    public function geocodeViaPlugin()
+    {
+        $address = "{$this->city}, {$this->province}, {$this->country}";
+
+        // Utilizziamo la classe Geocode del plugin
+        // $result = Geocode::geocodeAddress($address);
+        $result = MapsHelper::geocodeAddress($address);
+
+        if ($result) {
+            $this->lat = $result['lat'];
+            $this->lng = $result['lng'];
+        }
+    }
+
+    /**
+     * ADD THE FOLLOWING METHODS TO YOUR Location MODEL
+     *
+     * The 'latitude' and 'longitude' attributes should exist as fields in your table schema,
+     * holding standard decimal latitude and longitude coordinates.
+     *
+     * The 'city' attribute should NOT exist in your table schema, rather it is a computed attribute,
+     * which you will use as the field name for your Filament Google Maps form fields and table columns.
+     *
+     * You may of course strip all comments, if you don't feel verbose.
+     */
+
+    /**
+     * Returns the 'latitude' and 'longitude' attributes as the computed 'city' attribute,
+     * as a standard Google Maps style Point array with 'lat' and 'lng' attributes.
+     *
+     * Used by the Filament Google Maps package.
+     *
+     * Requires the 'city' attribute be included in this model's $fillable array.
+     *
+     * @return array
+     */
+    public function getCityAttribute(): array
+    {
+        return [
+            'lat' => (float) $this->latitude,
+            'lng' => (float) $this->longitude,
+        ];
+    }
+
+    /**
+     * Takes a Google style Point array of 'lat' and 'lng' values and assigns them to the
+     * 'latitude' and 'longitude' attributes on this model.
+     *
+     * Used by the Filament Google Maps package.
+     *
+     * Requires the 'city' attribute be included in this model's $fillable array.
+     *
+     * @param ?array $location
+     * @return void
+     */
+    public function setCityAttribute(?array $location): void
+    {
+        if (is_array($location)) {
+            $this->attributes['latitude'] = $location['lat'];
+            $this->attributes['longitude'] = $location['lng'];
+            unset($this->attributes['city']);
+        }
+    }
+
+    /**
+     * Get the lat and lng attribute/field names used on this table
+     *
+     * Used by the Filament Google Maps package.
+     *
+     * @return string[]
+     */
+    public static function getLatLngAttributes(): array
+    {
+        return [
+            'lat' => 'latitude',
+            'lng' => 'longitude',
+        ];
+    }
+
+    /**
+     * Get the name of the computed location attribute
+     *
+     * Used by the Filament Google Maps package.
+     *
+     * @return string
+     */
+    public static function getComputedLocation(): string
+    {
+        return 'city';
+    }
 
     public function getCapabilitiesAttribute($value)
     {
@@ -74,7 +181,7 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
         }
 
         // Ensure skills is always an array
-        if (! isset($capabilities['skills']) || ! is_array($capabilities['skills'])) {
+        if (!isset($capabilities['skills']) || !is_array($capabilities['skills'])) {
             $capabilities['skills'] = [];
         }
 
@@ -90,20 +197,20 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
         }
     }
 
-
-
     // 3. Definisci le conversioni (Miniature)
     public function registerMediaConversions(Media $media = null): void
     {
         // Miniatura quadrata per le liste attori (Admin/Director view)
-        $this->addMediaConversion('thumb')
+        $this
+            ->addMediaConversion('thumb')
             ->width(300)
             ->height(300)
             ->sharpen(10)
-            ->nonQueued(); // Generala subito (o togli per usare le code)
+            ->nonQueued();  // Generala subito (o togli per usare le code)
 
         // Se è un video, estrai un fotogramma al secondo 10 come copertina
-        $this->addMediaConversion('preview')
+        $this
+            ->addMediaConversion('preview')
             ->width(640)
             ->height(360)
             ->extractVideoFrameAtSecond(10)
@@ -114,23 +221,24 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
     public function registerMediaCollections(): void
     {
         // HEADSHOTS: Solo immagini, max 10 file
-        $this->addMediaCollection('headshots')
+        $this
+            ->addMediaCollection('headshots')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
-            ->useDisk('public'); // O 's3' se usi AWS
+            ->useDisk('public');  // O 's3' se usi AWS
 
         // SHOWREELS: Solo video, max 3 file
-        $this->addMediaCollection('showreels')
+        $this
+            ->addMediaCollection('showreels')
             ->acceptsMimeTypes(['video/mp4', 'video/quicktime'])
             ->useDisk('public');
 
         // CV: File PDF, massimo 1 file
-        $this->addMediaCollection('cv')
+        $this
+            ->addMediaCollection('cv')
             ->acceptsMimeTypes(['application/pdf'])
             ->singleFile()
             ->useDisk('public');
     }
-
-
 
     // Relazione con User
     public function user(): BelongsTo
@@ -143,7 +251,6 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
     {
         return $this->belongsTo(Company::class);
     }
-
 
     // Relazione con Customer
     public function customer(): BelongsTo
@@ -173,7 +280,8 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
             ->where('is_open', true)
             ->where(function ($query) {
                 // Filter by gender if specified in role requirements
-                $query->whereNull('requirements->gender')
+                $query
+                    ->whereNull('requirements->gender')
                     ->orWhere('requirements->gender', $this->gender);
             })
             ->where(function ($query) {
@@ -181,10 +289,12 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
                 if (isset($this->appearance['age_range'])) {
                     $age = $this->age;
                     $query->where(function ($q) use ($age) {
-                        $q->whereNull('requirements->age_min')
+                        $q
+                            ->whereNull('requirements->age_min')
                             ->orWhere('requirements->age_min', '<=', $age);
                     })->where(function ($q) use ($age) {
-                        $q->whereNull('requirements->age_max')
+                        $q
+                            ->whereNull('requirements->age_max')
                             ->orWhere('requirements->age_max', '>=', $age);
                     });
                 }
@@ -194,17 +304,18 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
                 if (isset($this->scene_nudo) && $this->scene_nudo === 'no') {
                     $query->where('scene_nudo', '!=', 'si');
                 }
-            })
-            /*
-            ->whereNotIn('id', function($query) {
-                // Exclude roles the profile has already applied to
-                $query->select('role_id')
-                      ->from('applications')
-                      ->where('profile_id', $this->id);
-            })
-                      */
-        ;
+            });
+
+        /*
+         * ->whereNotIn('id', function($query) {
+         *     // Exclude roles the profile has already applied to
+         *     $query->select('role_id')
+         *           ->from('applications')
+         *           ->where('profile_id', $this->id);
+         * })
+         */
     }
+
     public function getMatchingRolesAttribute()
     {
         return $this->getMatchingRolesQuery()->get();
@@ -217,5 +328,4 @@ class Actor extends Model implements HasMedia // <--- 1. Implementa l'interfacci
         }
         return $query;
     }
-
 }

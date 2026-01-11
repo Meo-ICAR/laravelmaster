@@ -6,7 +6,10 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ProjectForm
 {
@@ -14,24 +17,82 @@ class ProjectForm
     {
         return $schema
             ->components([
-                TextInput::make('user_id')
+                Section::make('Informazioni Base')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('title')
+                                ->label('Titolo Progetto')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpan(2)
+                                ->placeholder('Es: "Il Grande Film"'),
+
+
+
+                            Select::make('type')
+                                ->label('Tipo Progetto')
+                                ->options([
+                                    'feature_film' => 'Film Lungometraggio',
+                                    'commercial' => 'Spot Pubblicitario',
+                                    'tv_series' => 'Serie TV',
+                                    'short' => 'Cortometraggio',
+                                    'documentary' => 'Documentario',
+                                    'web_series' => 'Web Series',
+                                ])
                     ->required()
-                    ->numeric(),
-                TextInput::make('title')
-                    ->required(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                TextInput::make('production_company'),
-                TextInput::make('type')
+                                ->default('feature_film')
+                                ->native(false),
+
+                            Select::make('status')
+                                ->label('Stato Progetto')
+                                ->options([
+                                    'casting' => 'In Casting',
+                                    'production' => 'In Produzione',
+                                    'wrapped' => 'Completato',
+                                    'cancelled' => 'Annullato',
+                                ])
                     ->required()
-                    ->default('feature_film'),
-                TextInput::make('status')
-                    ->required()
-                    ->default('casting'),
-                DatePicker::make('start_date'),
-                TextInput::make('city'),
-                Select::make('company_id')
-                    ->relationship('company', 'name'),
-            ]);
+                                ->default('casting')
+                                ->native(false),
+
+                            TextInput::make('production_company')
+                                ->label('Casa di Produzione')
+                                ->maxLength(255)
+                                ->placeholder('Es: "Universal Pictures Italia"'),
+
+                            DatePicker::make('start_date')
+                                ->label('Data Inizio Produzione')
+                                ->native(false)
+                                ->displayFormat('d/m/Y')
+                                ->helperText('Data prevista di inizio delle riprese'),
+                        ]),
+                    ]),
+
+                Section::make('Descrizione')
+                    ->schema([
+                        Textarea::make('description')
+                            ->label('Descrizione Progetto')
+                            ->rows(6)
+                            ->columnSpanFull()
+                            ->placeholder('Descrizione dettagliata del progetto, sinossi, note per gli attori...')
+                            ->helperText('Informazioni che verranno mostrate agli attori interessati'),
+                    TextInput::make('city')
+                                ->label('Città')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('Es: Milano, Roma, Napoli')
+                                ->helperText('Città dove si svolgono prevalentemente le riprese'),
+
+  SpatieMediaLibraryFileUpload::make('photos')
+                            ->label('Poster')
+                            ->collection('photos')
+                            ->image()
+                            ->imageEditor()
+                            ->reorderable()
+                            ->maxFiles(20)
+                            ->maxSize(10240) // 10MB
+                            ->columnSpanFull(),
+                                ])
+                    ]);
     }
 }

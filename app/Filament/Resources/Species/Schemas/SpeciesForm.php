@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Species\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Guava\IconPicker\Forms\Components\IconPicker;
 
 class SpeciesForm
 {
@@ -14,15 +15,20 @@ class SpeciesForm
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('slug')
-                    ->required(),
-                TextInput::make('icon'),
+                IconPicker::make('icon')
+                    ->label('Icona della Razza')
+                    ->columns([
+                        'default' => 1,
+                        'lg' => 3,
+                    ]),
                 Textarea::make('description')
                     ->columnSpanFull(),
                 TextInput::make('sort_order')
                     ->required()
                     ->numeric()
                     ->default(0),
+                TextInput::make('slug')
+                    ->required(),
             ]);
     }
 }

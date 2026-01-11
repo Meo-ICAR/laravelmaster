@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 class ProjectService extends Model
 {
@@ -25,7 +26,7 @@ class ProjectService extends Model
         'needed_until',
         'notes',
         'specifications',
-         'is_open',
+        'is_open',
     ];
 
     /**
@@ -162,7 +163,7 @@ class ProjectService extends Model
     }
 
     public function quotations()
-{
-    return $this->hasMany(\App\Models\Quotation::class, 'project_service_id');
-}
+    {
+        return $this->hasMany(\App\Models\Quotation::class, 'project_service_id');
+    }
 }
