@@ -20,9 +20,15 @@ class SpeciesResource extends Resource
 {
     protected static ?string $model = Species::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
+    protected static ?string $navigationLabel = 'Specie Animali';
+
+    protected static ?string $modelLabel = 'Specie';
+
+    protected static ?string $pluralModelLabel = 'Spece';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Settings';
 
     public static function form(Schema $schema): Schema
     {

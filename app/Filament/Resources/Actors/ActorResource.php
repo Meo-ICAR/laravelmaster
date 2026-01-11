@@ -19,7 +19,7 @@ class ActorResource extends Resource
 {
     protected static ?string $model = Actor::class;
 
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationLabel = 'Attori';
 

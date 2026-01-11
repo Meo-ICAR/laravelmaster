@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
@@ -81,17 +82,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         ];
     }
 
-    public function animals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function animals(): HasMany
     {
         return $this->hasMany(Animal::class);
     }
 
-    public function shortlists(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function shortlists(): HasMany
     {
         return $this->hasMany(Shortlist::class);
     }
 
-    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
     }
@@ -101,7 +102,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->roles()->where('slug', $role)->exists();
     }
 
-    public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function scopeWithRole($query, $role)
+    {
+        return $query->whereHas('roles', function ($q) use ($role) {
+            $q->where('slug', $role);
+        });
+    }
+
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }

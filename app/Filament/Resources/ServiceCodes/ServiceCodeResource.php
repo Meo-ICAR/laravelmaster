@@ -18,10 +18,8 @@ use UnitEnum;
 class ServiceCodeResource extends Resource
 {
     protected static ?string $model = ServiceCode::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static UnitEnum|string|null $navigationGroup = 'Sistema';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-s-currency-euro';
+    protected static UnitEnum|string|null $navigationGroup = 'Settings';
 
     public static function form(Schema $schema): Schema
     {
