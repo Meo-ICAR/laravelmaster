@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasWhatsapp;
-use Cheesegrits\FilamentGoogleMaps\Fields\Map;
+use Cheesegrits\FilamentGoogleMaps\Helpers\Geocode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,17 +17,9 @@ class Service extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected $appends = ['service_code_label'];
 
-    protected $appends = ['service_type_label'];
-
-    public function serviceType(): BelongsTo
-    {
-        return $this->belongsTo(ServiceType::class);
-    }
-
+    // Relazione con User
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -38,34 +31,53 @@ class Service extends Model
         return $this->belongsTo(Company::class);
     }
 
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            if (auth()->check()) {
+                $model->user_id = auth()->id();
+                $model->company_id = auth()->user()->company_id;
+            }
+        });
+        static::saving(function ($model) {
+            if ($model->isDirty(['city', 'province', 'country'])) {
+                $model->geocodeViaPlugin();
+            }
+        });
+    }
+
+    /**
+     * Utilizza la logica del plugin per ottenere le coordinate
+     */
+    public function geocodeViaPlugin()
+    {
+        $address = "{$this->city}, {$this->province}, {$this->country}";
+
+        // Utilizziamo la classe Geocode del plugin
+        // $result = Geocode::geocodeAddress($address);
+        $result = Geocode::geocodeAddress($address);
+
+        if ($result) {
+            $this->latitude = $result['lat'];
+            $this->longitude = $result['lng'];
+        }
+    }
+
     public function quotations(): HasMany
     {
-        return $this->hasMany(Quotation::class);
+        return $this->hasMany(ProjectServiceQuotation::class);
     }
 
-    public function serviceCodes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function serviceCodes(): BelongsToMany
     {
-        return $this->belongsToMany(ServiceCode::class);
+        return $this->belongsToMany(ServiceCode::class, 'service_service_code');
     }
 
-    public function getServiceTypeLabelAttribute(): string
+    public function getServiceCodeLabelAttribute(): string
     {
-        if ($this->relationLoaded('serviceType') && $this->serviceType) {
-            return $this->serviceType->name;
+        if ($this->relationLoaded('serviceCodes')) {
+            return $this->serviceCodes->pluck('code')->filter()->implode(', ');
         }
-
-        return $this->service_type
-            ? ucfirst($this->service_type)
-            : 'Non specificato';
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeOfType($query, string $type)
-    {
-        return $query->where('service_type', $type);
+        return $this->service_code ?: 'Non specificato';
     }
 }

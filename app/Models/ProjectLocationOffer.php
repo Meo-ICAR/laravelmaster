@@ -14,7 +14,7 @@ class ProjectLocationOffer extends Model
         'notes',
         'status',
         'valid_until',
-        'company_id', s
+        'company_id',
     ];
 
     protected $casts = [

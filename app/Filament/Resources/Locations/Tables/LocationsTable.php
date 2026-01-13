@@ -24,52 +24,12 @@ class LocationsTable
                     ->searchable(),
                 TextColumn::make('city')
                     ->searchable(),
-                TextColumn::make('province')
-                    ->searchable(),
-                TextColumn::make('postal_code')
-                    ->searchable(),
-                TextColumn::make('country')
-                    ->searchable(),
-                TextColumn::make('latitude')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('longitude')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('contact_person')
                     ->searchable(),
                 TextColumn::make('contact_phone')
                     ->searchable(),
-                TextColumn::make('contact_email')
-                    ->searchable(),
-                TextColumn::make('potenza_elettrica')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('website')
                     ->searchable(),
-                IconColumn::make('is_water')
-                    ->boolean(),
-                IconColumn::make('is_consent_work')
-                    ->boolean(),
-                TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                TextColumn::make('company.name')
-                    ->searchable(),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),

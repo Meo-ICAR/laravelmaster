@@ -39,13 +39,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
      *
      * @var list<string>
      */
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'avatar_url',  // Non dimenticare questo se vuoi l'avatar!
+        'avatar_url',
         'email_verified_at',
         'company_id',
+        'role_id',
         'privacy_policy_accepted_at',
         'terms_accepted_at',
         'marketing_consent',
@@ -92,19 +99,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(Shortlist::class);
     }
 
-    public function roles(): BelongsToMany
+    public function role(): BelongsTo
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsTo(Role::class);
     }
 
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('slug', $role)->exists();
+        return $this->role && $this->role->slug === $role;
     }
 
     public function scopeWithRole($query, $role)
     {
-        return $query->whereHas('roles', function ($q) use ($role) {
+        return $query->whereHas('role', function ($q) use ($role) {
             $q->where('slug', $role);
         });
     }

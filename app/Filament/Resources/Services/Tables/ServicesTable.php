@@ -19,57 +19,21 @@ class ServicesTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nome Azienda/Persona')
+                    ->searchable(),
+                TextColumn::make('serviceCode.name')
+                    ->label('Servizio')
                     ->searchable(),
                 TextColumn::make('contact_name')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('phone')
+                    ->label('Nominativo')
                     ->searchable(),
                 TextColumn::make('mobile')
                     ->searchable(),
-                TextColumn::make('address')
-                    ->searchable(),
-                TextColumn::make('city')
-                    ->searchable(),
-                TextColumn::make('province')
-                    ->searchable(),
-                TextColumn::make('postal_code')
-                    ->searchable(),
-                TextColumn::make('country')
-                    ->searchable(),
-                TextColumn::make('latitude')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('longitude')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('travel_km')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('serviceType.name')
-                    ->searchable(),
                 TextColumn::make('website')
                     ->searchable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                TextColumn::make('user.name')
+                TextColumn::make('city')
+                    ->label('Città')
                     ->searchable(),
-                TextColumn::make('company.name')
-                    ->searchable(),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),

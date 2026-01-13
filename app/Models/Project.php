@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Project extends Model implements HasMedia
 {
@@ -22,10 +23,21 @@ class Project extends Model implements HasMedia
         'end_date' => 'date',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($project) {
+            if (auth()->check()) {
+                $project->user_id = auth()->id();
+                $project->company_id = auth()->user()->company_id;
+            }
+        });
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+
     public function roles(): HasMany
     {
         return $this->hasMany(Role::class);
@@ -38,12 +50,12 @@ class Project extends Model implements HasMedia
     {
         return $this->hasMany(ProjectService::class);
     }
+
     // Relazione con Company
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
-
 
     /**
      * Get all project locations for this project.
@@ -60,12 +72,14 @@ class Project extends Model implements HasMedia
     {
         return $this->hasMany(Quotation::class);
     }
+
     /**
      * Register the media collections.
      */
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('photos')
+        $this
+            ->addMediaCollection('photos')
             ->useDisk('public')
             ->singleFile(false)
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
@@ -76,14 +90,16 @@ class Project extends Model implements HasMedia
      */
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('thumb')
+        $this
+            ->addMediaConversion('thumb')
             ->width(300)
             ->height(300)
             ->sharpen(10)
             ->optimize()
             ->performOnCollections('photos');
 
-        $this->addMediaConversion('preview')
+        $this
+            ->addMediaConversion('preview')
             ->width(800)
             ->height(600)
             ->sharpen(10)
@@ -107,8 +123,6 @@ class Project extends Model implements HasMedia
         return $this->getFirstMedia('photos');
     }
 
-
-
     /**
      * Get the main photo URL.
      */
@@ -124,5 +138,4 @@ class Project extends Model implements HasMedia
     {
         return $this->primary_photo?->getUrl('thumb');
     }
-
 }

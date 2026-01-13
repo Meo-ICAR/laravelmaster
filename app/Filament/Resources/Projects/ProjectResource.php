@@ -18,6 +18,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use BackedEnum;
 use UnitEnum;
+use \Illuminate\Database\Eloquent\Builder;
 
 class ProjectResource extends Resource
 {
@@ -69,15 +70,10 @@ class ProjectResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()
             ->with(['owner', 'roles']);
-
-        // If user is a director, only show projects from their company
-        if (auth()->user()->isDirector() && !auth()->user()->isAdmin()) {
-            $query->where('company_id', auth()->user()->company_id);
-        }
 
         return $query;
     }
@@ -97,10 +93,5 @@ class ProjectResource extends Resource
         $items = parent::getNavigationItems();
 
         return $items;
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Traits\HasWhatsapp;  // <--- Importa il Trait
-use Cheesegrits\FilamentGoogleMaps\Fields\Map;
+use Cheesegrits\FilamentGoogleMaps\Helpers\Geocode;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ class Location extends Model implements HasMedia
      */
     public function offers(): HasMany
     {
-        return $this->hasMany(Offer::class);
+        return $this->hasMany(ProjectLocationOffer::class);
     }
 
     /**
@@ -71,18 +71,31 @@ class Location extends Model implements HasMedia
         'longitude' => 'float',
     ];
 
-    /**
-     * Get the user who created the location.
-     */
-    public function creator(): BelongsTo
+    // Relazione con User
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class);
     }
 
     // Relazione con Company
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            if (auth()->check()) {
+                $model->user_id = auth()->id();
+                $model->company_id = auth()->user()->company_id;
+            }
+        });
+        static::saving(function ($model) {
+            if ($model->isDirty(['city', 'province', 'country'])) {
+                $model->geocodeViaPlugin();
+            }
+        });
     }
 
     /**
@@ -115,6 +128,23 @@ class Location extends Model implements HasMedia
     public function hasCoordinates(): bool
     {
         return !is_null($this->latitude) && !is_null($this->longitude);
+    }
+
+    /**
+     * Utilizza la logica del plugin per ottenere le coordinate
+     */
+    public function geocodeViaPlugin()
+    {
+        $address = "{$this->city}, {$this->province}, {$this->country}";
+
+        // Utilizziamo la classe Geocode del plugin
+        // $result = Geocode::geocodeAddress($address);
+        $result = Geocode::geocodeAddress($address);
+
+        if ($result) {
+            $this->latitude = $result['lat'];
+            $this->longitude = $result['lng'];
+        }
     }
 
     /**

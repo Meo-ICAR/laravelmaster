@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\HasWhatsapp;  // <--- Importa il Trait
 use Carbon\Carbon;
 // use Cheesegrits\FilamentGoogleMaps\Fields\Map;
-use Cheesegrits\FilamentGoogleMaps\Helpers\Geocoder;
+use Cheesegrits\FilamentGoogleMaps\Helpers\Geocode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
@@ -64,11 +64,30 @@ class Actor extends Model implements HasMedia  // <--- 1. Implementa l'interfacc
         'capabilities' => '{"skills": []}',
     ];
 
+    // Relazione con User
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relazione con Company
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     /*
      * Boot del model per gestire la geocodifica automatica al salvataggio
      */
+
     protected static function booted()
     {
+        static::creating(function ($model) {
+            if (auth()->check()) {
+                $model->user_id = auth()->id();
+                $model->company_id = auth()->user()->company_id;
+            }
+        });
         static::saving(function ($model) {
             if ($model->isDirty(['city', 'province', 'country'])) {
                 $model->geocodeViaPlugin();
@@ -85,11 +104,11 @@ class Actor extends Model implements HasMedia  // <--- 1. Implementa l'interfacc
 
         // Utilizziamo la classe Geocode del plugin
         // $result = Geocode::geocodeAddress($address);
-        $result = MapsHelper::geocodeAddress($address);
+        $result = Geocode::geocodeAddress($address);
 
         if ($result) {
-            $this->lat = $result['lat'];
-            $this->lng = $result['lng'];
+            $this->latitude = $result['lat'];
+            $this->longitude = $result['lng'];
         }
     }
 
@@ -134,13 +153,28 @@ class Actor extends Model implements HasMedia  // <--- 1. Implementa l'interfacc
      * @param ?array $location
      * @return void
      */
-    public function setCityAttribute(?array $location): void
+
+    /**
+     * Set the city attribute.
+     *
+     * @param mixed $value
+     * @return void
+     */
+    public function setCityAttribute($value): void
     {
-        if (is_array($location)) {
-            $this->attributes['latitude'] = $location['lat'];
-            $this->attributes['longitude'] = $location['lng'];
-            unset($this->attributes['city']);
+        if (is_string($value)) {
+            // Se ricevi una stringa (nome città), cerca le coordinate
+            $geocoded = Geocode::getCoordinatesForAddress($value);
+            if ($geocoded) {
+                $this->attributes['latitude'] = $geocoded['lat'];
+                $this->attributes['longitude'] = $geocoded['lng'];
+            }
+        } elseif (is_array($value) && isset($value['lat'], $value['lng'])) {
+            // Se ricevi un array con lat e lng
+            $this->attributes['latitude'] = $value['lat'];
+            $this->attributes['longitude'] = $value['lng'];
         }
+        // Non salvare il valore grezzo in un attributo 'city' poiché non esiste nella tabella
     }
 
     /**
@@ -238,18 +272,6 @@ class Actor extends Model implements HasMedia  // <--- 1. Implementa l'interfacc
             ->acceptsMimeTypes(['application/pdf'])
             ->singleFile()
             ->useDisk('public');
-    }
-
-    // Relazione con User
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // Relazione con Company
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class);
     }
 
     // Relazione con Customer
